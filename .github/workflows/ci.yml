@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "feature/**"
+  pull_request:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 isort black
+
+      - name: Run isort check
+        run: |
+          isort --check-only ones scripts
+
+      - name: Run black check
+        run: |
+          black --check ones scripts
+
+      - name: Run flake8
+        run: |
+          flake8 ones scripts \
+            --max-line-length=100 \
+            --extend-ignore=E203,W503
+
+      - name: Check Python syntax
+        run: |
+          python -m compileall ones scripts
+
+      - name: Prepare petit-ones runtime directory
+        run: |
+          mkdir -p ~/.petit_ones/characters/puchiteya/{body,desire,logs}
+
+          cat > ~/.petit_ones/characters/puchiteya/SOUL.md <<'EOF'
+          # puchiteya
+
+          Test petit-one.
+          EOF
+
+          cat > ~/.petit_ones/characters/puchiteya/state.json <<'EOF'
+          {
+            "one_id": "puchiteya",
+            "status": "awake",
+            "mood": "neutral",
+            "last_action": null,
+            "updated_at": null
+          }
+          EOF
+
+          cat > ~/.petit_ones/characters/puchiteya/desire/state.json <<'EOF'
+          {
+            "curiosity": 0.45,
+            "expression": 0.35,
+            "connection": 0.30,
+            "rest": 0.20,
+            "updated_at": null
+          }
+          EOF
+
+          cat > ~/.petit_ones/characters/puchiteya/body/state.json <<'EOF'
+          {
+            "body_type": "mock",
+            "location": "unknown",
+            "battery": null,
+            "temperature": null,
+            "human_nearby": false,
+            "sensor_summary": "test",
+            "updated_at": null
+          }
+          EOF
+
+      - name: Run smoke test
+        run: |
+          python scripts/inspect_one.py --one puchiteya
+          python scripts/update_mock_body.py --one puchiteya
+          python scripts/run_once.py --one puchiteya
+          python scripts/inspect_memory.py --one puchiteya

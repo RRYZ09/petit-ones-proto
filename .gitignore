@@ -1,0 +1,19 @@
+# petit ones private data
+data/
+.local/
+.env
+
+characters/
+*.sqlite3
+*.db
+*.log
+state.json
+
+# user home mounted data
+.petits_ones/
+
+__pycache__/
+*.pyc
+.mypy_cache/
+.pytest_cache/
+.venv/
