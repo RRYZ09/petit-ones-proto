@@ -8,10 +8,12 @@ from ones.memory.sqlite_memory import SQLiteMemory
 from ones.storage.paths import require_character_dir
 from ones.utils.json_file import read_json, write_json
 from ones.utils.time import now_iso
+from ones.utils.yaml_file import read_yaml
 
 
 def run_once(one_id: str) -> str:
     base = require_character_dir(one_id)
+    desire_config = read_yaml(base / "config" / "desire.yaml")
 
     state_path = base / "state.json"
     desire_path = base / "desire" / "state.json"
@@ -23,7 +25,7 @@ def run_once(one_id: str) -> str:
     desire = read_json(desire_path)
     body = read_json(body_path)
 
-    desire, body_effects = apply_body_to_desire(desire, body)
+    desire, body_effects = apply_body_to_desire(desire, body, desire_config)
     write_json(desire_path, desire)
 
     memory = SQLiteMemory(base / "memory.sqlite3")
@@ -32,7 +34,7 @@ def run_once(one_id: str) -> str:
     action = choose_action(desire, body, state.get("last_action"))
     reason = reason_for_action(action, desire, recent_memories)
 
-    desire = update_desire_after_action(desire, action)
+    desire = update_desire_after_action(desire, action, desire_config)
     write_json(desire_path, desire)
 
     timestamp = now_iso()
