@@ -2,44 +2,26 @@
 
 まずは [README_IDEA_jp.md](./README_IDEA_jp.md)を読んでください。
 
-記憶・欲求・身体状態を持ちながら継続して存在する、小さな embodied beings。
+# 1. 整形・lint
+pre-commit run --all-files
 
-petit-ones は、
+# 2. M5 CoreS3 の身体状態を読む
+python -m scripts.update_m5_cores3_body --one puchiteya
 
-- 身体を通して世界を観察し
-- 内部状態を持続し
-- 記憶を蓄積し
-- 欲求や身体状態によって行動を変化させ
-- 特定の LLM や API に依存せず継続して存在する
+# 3. 現在状態を見る
+python -m scripts.inspect_one --one puchiteya
 
-小さな存在たちです。
+# 4. 1回だけ lifecycle を回す
+python -m scripts.run_once --one puchiteya
 
----
+# 5. 行動ログを見る
+tail -n 3 ~/.petit_ones/characters/puchiteya/logs/actions.log
 
-# Features
+# 6. 思考ログを見る
+tail -n 3 ~/.petit_ones/characters/puchiteya/logs/thoughts.log
 
-- 永続状態 (`state.json`)
-- 欲求システム (`desire/state.json`)
-- 身体状態統合 (`body/state.json`)
-- SQLite による記憶保存
-- 行動選択ループ
-- 内部状態からの mood 生成
-- 身体状態による欲求変化
-- 行動 cooldown
-- 思考 / 行動ログ
+# 7. 新しい記憶を見る
+python -m scripts.inspect_memory --one puchiteya --limit 5
 
----
-
-# Current Architecture
-
-```text
-body
-↓
-desire
-↓
-action selection
-↓
-memory
-↓
-next action
-```
+# 8. 旧 embodied-claude 記憶を見る
+python -m scripts.inspect_legacy_memory --one puchiteya --limit 5

@@ -27,6 +27,11 @@ def apply_body_to_desire(
     high_temperature = thresholds.get("high_temperature", 34.0)
     low_battery = thresholds.get("low_battery", 50)
 
+    m5_state = body.get("m5_cores3", {})
+    if m5_state.get("is_sleeping") is True:
+        updated["rest"] = clamp(updated.get("rest", 0) + 0.05)
+        effects.append("身体が眠っているので rest が上がった")
+
     if body.get("human_nearby") is True:
         updated["connection"] = clamp(updated.get("connection", 0) + human_nearby_connection)
         effects.append("人の気配があったので connection が上がった")
