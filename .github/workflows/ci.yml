@@ -92,3 +92,7 @@ jobs:
           python scripts/update_mock_body.py --one puchiteya
           python scripts/run_once.py --one puchiteya
           python scripts/inspect_memory.py --one puchiteya
+
+      - name: Run tests
+        run: |
+          pytest
